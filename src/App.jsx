@@ -1,5 +1,8 @@
 import { Route, Routes } from "react-router-dom";
 import Home from "./pages/Home";
+import NotFound from "./pages/NotFound";
+import Auth from "./pages/Auth";
+import ActivateAccount from "./pages/ActivateAccount";
 
 const App = () => {
   return (
@@ -7,7 +10,9 @@ const App = () => {
       <Route path="/" element={<Home />} />
       <Route path="/about" element={<div>About Page</div>} />
       <Route path="/contact" element={<div>Contact Page</div>} />
-      <Route path="*" element={<div>404 Not Found</div>} />
+      <Route path="/auth" element={<Auth />} />
+      <Route path="/auth/activate-account" element={<ActivateAccount />} />
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 };

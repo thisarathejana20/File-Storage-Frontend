@@ -1,22 +1,41 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { uploadFileToCloud } from "@/services/file";
 
-const initialState = {
-  files: [],
-};
+export const uploadFile = createAsyncThunk(
+  "files/upload",
+  async (formData, { rejectWithValue }) => {
+    try {
+      const response = await uploadFileToCloud(formData);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || "Upload failed");
+    }
+  }
+);
 
 const fileSlice = createSlice({
-  name: "file",
-  initialState,
-  reducers: {
-    setFiles: (state, action) => {
-      state.files = action.payload;
-    },
-    addFile: (state, action) => {
-      state.files.push(action.payload);
-    },
+  name: "files",
+  initialState: {
+    files: [],
+    loading: false,
+    error: null,
+  },
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(uploadFile.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(uploadFile.fulfilled, (state, action) => {
+        state.loading = false;
+        state.files.push(action.payload);
+      })
+      .addCase(uploadFile.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
   },
 });
-
-export const { setFiles, addFile } = fileSlice.actions;
 
 export default fileSlice.reducer;
